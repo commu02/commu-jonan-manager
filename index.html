@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commu Jonan - Instagram Post Manager</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome (Icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css?v=2">
+</head>
+<body>
+    <div class="app-container">
+        <!-- サイドバー -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-calendar-heart brand-icon"></i>
+                <div class="brand-text">
+                    <h1>Commu Jonan</h1>
+                    <span>Post Hub</span>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" data-tab="calendar"><i class="fa-regular fa-calendar"></i> カレンダー</a>
+                <a href="#" class="nav-item" data-tab="events"><i class="fa-solid fa-list-ul"></i> イベント一覧</a>
+                <a href="#" class="nav-item" data-tab="settings"><i class="fa-solid fa-sliders"></i> 設定</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <p class="status-indicator"><span class="dot live"></span> システム稼働中</p>
+            </div>
+        </aside>
+
+        <!-- メインコンテンツ -->
+        <main class="main-content">
+            <!-- ヘッダー -->
+            <header class="app-header">
+                <div class="header-search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="search-input" placeholder="イベントや校区を検索...">
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="sync-sheet-btn"><i class="fa-solid fa-rotate"></i> シート同期</button>
+                </div>
+            </header>
+
+            <!-- カレンダータブ -->
+            <section id="tab-calendar" class="tab-content active">
+                <div class="dashboard-grid">
+                    <!-- 左：カレンダー本体 -->
+                    <div class="card calendar-card">
+                        <div class="card-header">
+                            <div class="calendar-nav">
+                                <button class="btn-icon" id="prev-month-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                                <h2 id="current-month-year">2026年 8月</h2>
+                                <button class="btn-icon" id="next-month-btn"><i class="fa-solid fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                        <div class="calendar-grid">
+                            <div class="calendar-day-header-row">
+                                <div class="calendar-day-header">日</div>
+                                <div class="calendar-day-header">月</div>
+                                <div class="calendar-day-header">火</div>
+                                <div class="calendar-day-header">水</div>
+                                <div class="calendar-day-header">木</div>
+                                <div class="calendar-day-header">金</div>
+                                <div class="calendar-day-header">土</div>
+                            </div>
+                            <div id="calendar-days" class="calendar-days-container"></div>
+                        </div>
+                    </div>
+
+                    <!-- 右：AI生成 ＆ 詳細パネル -->
+                    <div class="card detail-card" id="detail-panel">
+                        <div class="empty-detail-state" id="empty-state">
+                            <i class="fa-solid fa-calendar-day"></i>
+                            <p>カレンダーからイベントを選択して<br>投稿文を自動生成します</p>
+                        </div>
+
+                        <div class="event-detail-content hidden" id="event-detail-content">
+                            <div class="event-tags">
+                                <span class="tag tag-school-district" id="detail-district">校区名</span>
+                                <span class="tag tag-status" id="detail-status">未着手</span>
+                            </div>
+                            <h3 id="detail-title">イベントタイトル</h3>
+                            
+                            <div class="event-meta-info">
+                                <p><i class="fa-regular fa-calendar"></i> <strong>日時:</strong> <span id="detail-datetime">---</span></p>
+                                <p><i class="fa-solid fa-location-dot"></i> <strong>場所:</strong> <span id="detail-location">---</span></p>
+                                <p><i class="fa-solid fa-align-left"></i> <strong>詳細:</strong></p>
+                                <div class="detail-description-box" id="detail-description">詳細情報が入ります。</div>
+                            </div>
+
+                            <hr class="divider">
+
+                            <div class="ai-generator-section">
+                                <h4><i class="fa-solid fa-wand-magic-sparkles"></i> AI投稿自動生成</h4>
+                                <div class="ai-options">
+                                    <label for="ai-tone">トーン＆マナー:</label>
+                                    <select id="ai-tone">
+                                        <option value="friendly">親しみやすく元気（標準）</option>
+                                        <option value="informative">わかりやすく丁寧</option>
+                                        <option value="excited">ワクワクするイベント調</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-gradient btn-full" id="generate-ai-btn">
+                                    <i class="fa-solid fa-sparkles"></i> Instagram用投稿を生成
+                                </button>
+                                
+                                <div class="ai-loading hidden" id="ai-loader">
+                                    <div class="spinner"></div>
+                                    <p>AIが素敵な投稿案を考えています...</p>
+                                </div>
+
+                                <div class="ai-result-area hidden" id="ai-result-area">
+                                    <div class="tab-sub-nav">
+                                        <button class="tab-sub-item active" data-subtab="caption">キャプション</button>
+                                        <button class="tab-sub-item" data-subtab="reels">リール/画像構成案</button>
+                                    </div>
+                                    
+                                    <div id="subtab-caption" class="subtab-content active">
+                                        <textarea id="output-caption" readonly></textarea>
+                                        <button class="btn btn-secondary btn-sm copy-btn" data-target="output-caption">
+                                            <i class="fa-regular fa-copy"></i> コピーする
+                                        </button>
+                                    </div>
+                                    
+                                    <div id="subtab-reels" class="subtab-content">
+                                        <textarea id="output-reels" readonly></textarea>
+                                        <button class="btn btn-secondary btn-sm copy-btn" data-target="output-reels">
+                                            <i class="fa-regular fa-copy"></i> コピーする
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- イベント一覧タブ -->
+            <section id="tab-events" class="tab-content">
+                <div class="card">
+                    <div class="card-header table-header">
+                        <h2>イベント一覧</h2>
+                        <div class="filter-group">
+                            <select id="filter-district">
+                                <option value="all">すべての校区</option>
+                            </select>
+                            <select id="filter-status">
+                                <option value="all">すべてのステータス</option>
+                                <option value="未着手">未着手</option>
+                                <option value="作成中">作成中</option>
+                                <option value="予約済み">予約済み</option>
+                                <option value="投稿完了">投稿完了</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="event-table">
+                            <thead>
+                                <tr>
+                                    <th>校区</th>
+                                    <th>イベント名</th>
+                                    <th>開催日時</th>
+                                    <th>場所</th>
+                                    <th>投稿ステータス</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="event-table-body">
+                                <!-- JSで動的生成 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 設定タブ -->
+            <section id="tab-settings" class="tab-content">
+                <div class="card settings-card">
+                    <h2>アプリ設定</h2>
+                    <div class="setting-item">
+                        <label for="setting-sheet-url">Googleスプレッドシート共有URL (公開または閲覧権限付きリンク)</label>
+                        <input type="text" id="setting-sheet-url" placeholder="https://docs.google.com/spreadsheets/d/.../edit?usp=sharing">
+                        <small>※ リンクを知っている全員が閲覧できる状態にしてください。データを自動抽出します。</small>
+                    </div>
+                    <div class="setting-item">
+                        <label for="setting-gemini-key">Gemini APIキー</label>
+                        <input type="password" id="setting-gemini-key" placeholder="AIによる自動生成を利用する場合はキーを入力してください">
+                        <small>※ 入力されたキーはブラウザのLocal Storageに安全に保存され、サーバーへ送信されることはありません。</small>
+                    </div>
+                    <button class="btn btn-primary" id="save-settings-btn">設定を保存する</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- トースト通知 -->
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="app.js?v=2"></script>
+</body>
+</html>
