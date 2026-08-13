@@ -15,7 +15,7 @@
 <body>
     <div class="app-container">
         <!-- サイドバー -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="brand">
                 <i class="fa-solid fa-calendar-heart brand-icon"></i>
                 <div class="brand-text">
@@ -35,6 +35,9 @@
             </div>
         </aside>
 
+        <!-- 背景マスク（スマホのサイドバー用） -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
         <!-- メインコンテンツ -->
         <main class="main-content">
             <!-- ヘッダー -->
@@ -45,6 +48,10 @@
                 </div>
                 <div class="header-actions">
                     <button class="btn btn-primary" id="sync-sheet-btn"><i class="fa-solid fa-rotate"></i> シート同期</button>
+                    <!-- メニュー開閉ボタン -->
+                    <button class="menu-toggle-btn" id="menu-toggle-btn" aria-label="メニューを開く">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
                 </div>
             </header>
 

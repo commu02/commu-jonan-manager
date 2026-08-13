@@ -42,6 +42,9 @@ document.addEventListener("DOMContentLoaded", () => {
 function initApp() {
     // タブ切り替え
     const navItems = document.querySelectorAll(".nav-item");
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebar-overlay");
+
     navItems.forEach(item => {
         item.addEventListener("click", (e) => {
             e.preventDefault();
@@ -54,8 +57,28 @@ function initApp() {
                 tab.classList.remove("active");
             });
             document.getElementById(`tab-${tabId}`).classList.add("active");
+
+            // タップしてタブを切り替えたら、サイドバーを自動で閉じる (スマホ用)
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
         });
     });
+
+    // モバイルメニューのトグル開閉
+    const menuToggleBtn = document.getElementById("menu-toggle-btn");
+    if (menuToggleBtn) {
+        menuToggleBtn.addEventListener("click", () => {
+            sidebar.classList.add("active");
+            overlay.classList.add("active");
+        });
+    }
+
+    if (overlay) {
+        overlay.addEventListener("click", () => {
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
+        });
+    }
 
     // カレンダー月移動
     document.getElementById("prev-month-btn").addEventListener("click", () => {
