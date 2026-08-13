@@ -27,9 +27,9 @@ let currentYear = 2026;
 let currentMonth = 7; // 0-indexed (8月は7)
 let selectedEvent = null;
 
-// 設定オブジェクト
+// 設定オブジェクト (デフォルトのスプレッドシートURLを設定)
 let appSettings = {
-    sheetUrl: "",
+    sheetUrl: "https://docs.google.com/spreadsheets/d/1FkgKEtDTLxLa7MVM0KgK4N1gsSTNhEc7xhE-qAzi92I/edit?usp=share_link",
     geminiKey: ""
 };
 
@@ -366,11 +366,17 @@ async function generatePostWithAI() {
 
 // 設定のロード・セーブ
 function loadSettings() {
+    const defaultUrl = "https://docs.google.com/spreadsheets/d/1FkgKEtDTLxLa7MVM0KgK4N1gsSTNhEc7xhE-qAzi92I/edit?usp=share_link";
     const saved = localStorage.getItem("commu_jonan_settings");
     if (saved) {
         appSettings = JSON.parse(saved);
-        document.getElementById("setting-sheet-url").value = appSettings.sheetUrl || "";
+        appSettings.sheetUrl = appSettings.sheetUrl || defaultUrl;
+        document.getElementById("setting-sheet-url").value = appSettings.sheetUrl;
         document.getElementById("setting-gemini-key").value = appSettings.geminiKey || "";
+    } else {
+        // 初めて使う場合はデフォルトURLを設定画面に表示
+        document.getElementById("setting-sheet-url").value = defaultUrl;
+        appSettings.sheetUrl = defaultUrl;
     }
 }
 
